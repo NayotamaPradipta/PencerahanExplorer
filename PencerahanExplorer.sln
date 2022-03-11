@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32210.238
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PencerahanExplorer", "PencerahanExplorer\PencerahanExplorer.csproj", "{0B01808A-C08C-4254-9908-3520D33BC57F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0B01808A-C08C-4254-9908-3520D33BC57F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B01808A-C08C-4254-9908-3520D33BC57F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B01808A-C08C-4254-9908-3520D33BC57F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B01808A-C08C-4254-9908-3520D33BC57F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0EBF1E7A-ACBF-4D4C-923C-BB41C4297CD8}
+	EndGlobalSection
+EndGlobal
