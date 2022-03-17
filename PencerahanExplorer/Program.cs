@@ -164,6 +164,103 @@ namespace PencerahanExplorer
                 return target_path;
             }
         }
+
+        public class DFS
+        {
+            // Kurang lebih modifikasi dari BFS yang di atas
+            // Untuk mencari file pertama dengan nama input
+
+            // Inisialisasi atribut
+            private bool found;
+            private string target_name;
+            public string target_path; // sementara public
+            private Stack<string> stack; // untuk keep track current path
+            private List<string> output; // untuk keep track visited path
+
+            public DFS(string start_path, string target_name)
+            {
+                // Inisialisasi atribut
+                found = false;
+                this.target_name = target_name;
+                target_path = "NULL";
+                stack = new Stack<string>();
+                stack.Push(start_path);
+                output = new List<string>();
+                output.Add(start_path);
+
+                // Loop DFS utama
+                while (!found && stack.Count > 0)
+                {
+                    string top = stack.Pop();
+                    SearchDFS(top);
+                }
+            }
+
+            private void SearchDFS(string path)
+            {
+                string[] files = null;
+
+                try
+                {
+                    // Exception handling untuk restricted folder
+                    files = Directory.GetFiles(path);
+                }
+                catch { }
+
+                finally
+                {
+                    if (files != null)
+                    {
+                        // Iterate over files in current path
+                        int i = 0;
+                        while (!found && i < files.Length)
+                        {
+                            if (Path.GetFileName(files[i]) == target_name)
+                            {
+                                found = true; 
+                                target_path = files[i]; // Pencarian selesai
+                            }
+                            else
+                            {
+                                i++;
+                            }
+                        }
+
+                        // File not found in current path, lanjut ke path selanjutnya
+                        if (!found)
+                        {
+                            string[] folders = Directory.GetDirectories(path);
+                            for (int k = 0; k < folders.Length; k++)
+                            {
+                                if (output.Contains(folders[k])) // Cek apakah sudah visited
+                                {
+                                    // skip folder
+                                }
+                                else
+                                {
+                                    stack.Push(folders[k]);
+                                    output.Add(folders[k]);
+                                    SearchDFS(folders[k]);
+                                }
+                            }
+                            stack.Pop();
+                        }
+                    }
+                }
+            }
+
+            public bool isFound() // Apakah ketemu
+            {
+                return found;
+            }
+
+            public string get_target_path() // Ketemunya di path mana
+            {
+                return target_path;
+            }
+
+
+        }
     }
 
 }
