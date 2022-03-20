@@ -27,20 +27,12 @@ namespace PencerahanExplorer
                 Application.Run(f1);
                 string target_name = f1.target_name;
                 Console.WriteLine("Starting folder : " + path);
-                /*
-                Search.BFS bfs = new Search.BFS(path, target_name);
+                
+                Search.BFS bfs = new Search.BFS(path, target_name, true);
                 if (bfs.isFound())
                 {
-                    Console.WriteLine("File found in path : " + bfs.target_path);
-                    Form3 f2 = new Form3(path, bfs.target_path);
-                    Application.Run(f2);
-                }
-                */
-                Search.DFS dfs = new Search.DFS(path, target_name);
-                if (dfs.isFound())
-                {
-                    Console.WriteLine("File found in path : " + dfs.target_path);
-                    FileFound f2 = new FileFound(path, dfs.target_path);
+                    //Console.WriteLine("File found in path : " + bfs.target_path);
+                    FileFound f2 = new FileFound(path, bfs.pathList);
                     Application.Run(f2);
                 }
                 else
@@ -48,6 +40,15 @@ namespace PencerahanExplorer
                     FileNotFound f3 = new FileNotFound();
                     Application.Run(f3);
                 }
+                /*
+                Search.DFS dfs = new Search.DFS(path, target_name);
+                if (dfs.isFound())
+                {
+                    FileFound f2 = new FileFound(path, dfs.target_path);
+                    Application.Run(f2);
+                }
+                */
+
             }
             else
             {
@@ -56,109 +57,98 @@ namespace PencerahanExplorer
             
         }
     }
-    /*
-    namespace WindowsFormsApp1
-    {
-        class ViewerSample // Contoh Visualisasi Graf
-        {
-            public static void Main()
-            {
-                //create a form
-                System.Windows.Forms.Form form = new System.Windows.Forms.Form();
-                //create a viewer object
-                Microsoft.Msagl.GraphViewerGdi.GViewer viewer = new
-                Microsoft.Msagl.GraphViewerGdi.GViewer();
-                //create a graph object
-                Microsoft.Msagl.Drawing.Graph graph = new
-                Microsoft.Msagl.Drawing.Graph("graph");
-                //create the graph content
-                graph.AddEdge("A", "B");
-                graph.AddEdge("B", "C");
-                graph.AddEdge("A", "C").Attr.Color = Microsoft.Msagl.Drawing.Color.Green;
-                graph.FindNode("A").Attr.FillColor =
-                Microsoft.Msagl.Drawing.Color.Magenta;
-                graph.FindNode("B").Attr.FillColor =
-                Microsoft.Msagl.Drawing.Color.MistyRose;
-                Microsoft.Msagl.Drawing.Node c = graph.FindNode("C");
-                c.Attr.FillColor = Microsoft.Msagl.Drawing.Color.PaleGreen;
-                c.Attr.Shape = Microsoft.Msagl.Drawing.Shape.Diamond;
-                //bind the graph to the viewer
-                viewer.Graph = graph;
-                //associate the viewer with the form
-                form.SuspendLayout();
-                viewer.Dock = System.Windows.Forms.DockStyle.Fill;
-                form.Controls.Add(viewer);
-                form.ResumeLayout();
-                //show the form
-                form.ShowDialog();
-            }
-        }
-    }
-    */
+    
     namespace Search
     { 
         public class BFS
-        {
-            // belum handle untuk banyak instance dengan nama sama di folder yang berbeda
+        { 
             // belum bikin tree
 
             private bool found;
             private string target_name;
-            public string target_path; // sementara public
             private Queue<string> queue;
+            public List<string> pathList;
 
-            public BFS(string start_path, string target_name)
+            public BFS(string start_path, string target_name, bool findall)
             {
                 // inisialisasi nilai-nilai atribut
                 found = false;
                 this.target_name = target_name;
-                target_path = "NULL";
                 queue = new Queue<string>();
+                pathList = new List<string>();
+
                 queue.Enqueue(start_path);
-                while (!found && queue.Count > 0)
+                if (findall)
                 {
-                    string head = queue.Dequeue();
-                    SearchBFS(head);
+                    while (queue.Count > 0)
+                    {
+                        string head = queue.Dequeue();
+                        SearchBFS(head, findall);
+                    }
+                }
+                else
+                {
+                    while (!found && queue.Count > 0)
+                    {
+                        string head = queue.Dequeue();
+                        SearchBFS(head, findall);
+                    }
                 }
 
             }
 
-            private void SearchBFS(string path)
+            private void SearchBFS(string path, bool findall)
             {
                 string[] files = null;
+                string[] folders = null;
                 try
                 {
                     // pake exception handling karena kadang nemu restricted folder
                     files = Directory.GetFiles(path);
-                
+                    folders = Directory.GetDirectories(path);
+
                 }
                 catch { }
                 finally
                 {
                     if (files != null)
                     {
-                        int i = 0;
+                        int i;
                         // iterate over files
-                        while (!found && i < files.Length)
+                        if (findall)
                         {
-                            if (Path.GetFileName(files[i]) == target_name)
+                            for (i = 0; i < files.Length; i++)
                             {
-                                found = true;
-                                target_path = files[i];
-                            }
-                            else
-                            {
-                                i++;
+                                if (Path.GetFileName(files[i]) == target_name)
+                                {
+                                    found = true;
+                                    pathList.Add(files[i]);
+                                }
                             }
                         }
-                        // file not found in current path, enqueue subdirectories
-                        if (!found)
+                        else
                         {
-                            string[] folders = Directory.GetDirectories(path);
-                            for (int k = 0; k < folders.Length; k++)
+                            i = 0;
+                            while (!found && i < files.Length)
                             {
-                                queue.Enqueue(folders[k]);
+                                if (Path.GetFileName(files[i]) == target_name)
+                                {
+                                    found = true;
+                                    pathList.Add(files[i]);
+                                }
+                                else
+                                {
+                                    i++;
+                                }
                             }
+                        }
+                    }
+                    // file not found in current path, enqueue subdirectories
+                    if ((findall || (!findall && !found)) && folders != null)
+                    {
+                        for (int k = 0; k < folders.Length; k++)
+                        {
+                            queue.Enqueue(folders[k]);
                         }
                     }
                 }
@@ -169,9 +159,9 @@ namespace PencerahanExplorer
                 return found;
             }
 
-            public string get_target_path()
+            public List<string> get_target_path()
             {
-                return target_path;
+                return pathList;
             }
         }
 
