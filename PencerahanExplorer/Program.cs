@@ -18,15 +18,16 @@ namespace PencerahanExplorer
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Form2 f1;
+            FileNameInput f1;
             FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
             if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
             {
                 string path = folderBrowserDialog.SelectedPath;
-                f1 = new Form2(path);
+                f1 = new FileNameInput(path);
                 Application.Run(f1);
                 string target_name = f1.target_name;
                 Console.WriteLine("Starting folder : " + path);
+                /*
                 Search.BFS bfs = new Search.BFS(path, target_name);
                 if (bfs.isFound())
                 {
@@ -34,9 +35,18 @@ namespace PencerahanExplorer
                     Form3 f2 = new Form3(path, bfs.target_path);
                     Application.Run(f2);
                 }
+                */
+                Search.DFS dfs = new Search.DFS(path, target_name);
+                if (dfs.isFound())
+                {
+                    Console.WriteLine("File found in path : " + dfs.target_path);
+                    FileFound f2 = new FileFound(path, dfs.target_path);
+                    Application.Run(f2);
+                }
                 else
                 {
-                    Console.WriteLine("File not found ");
+                    FileNotFound f3 = new FileNotFound();
+                    Application.Run(f3);
                 }
             }
             else

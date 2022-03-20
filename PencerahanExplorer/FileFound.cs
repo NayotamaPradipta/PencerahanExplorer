@@ -10,11 +10,11 @@ using System.Windows.Forms;
 
 namespace PencerahanExplorer
 {
-    public partial class Form3 : Form
+    public partial class FileFound : Form
     {
         // hyperlink belum berupa list
         string path_link;
-        public Form3(string start_path, string final_path)
+        public FileFound(string start_path, string final_path)
         {
             InitializeComponent();
             label1.Text = "Starting Path : " + start_path;
