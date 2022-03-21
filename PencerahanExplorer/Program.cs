@@ -29,17 +29,8 @@ namespace PencerahanExplorer
                 Console.WriteLine("Starting folder : " + path);
                 
                 Search.BFS bfs = new Search.BFS(path, target_name, true);
-                if (bfs.isFound())
-                {
-                    //Console.WriteLine("File found in path : " + bfs.target_path);
-                    FileFound f2 = new FileFound(path, bfs.pathList);
-                    Application.Run(f2);
-                }
-                else
-                {
-                    FileNotFound f3 = new FileNotFound();
-                    Application.Run(f3);
-                }
+                FileFound f2 = new FileFound(path, bfs.pathList, bfs.isFound());
+                Application.Run(f2);
                 /*
                 Search.DFS dfs = new Search.DFS(path, target_name);
                 if (dfs.isFound())
@@ -263,4 +254,66 @@ namespace PencerahanExplorer
         }
     }
 
+}
+
+namespace Tree
+{
+    public class Node
+    {
+        private string name;
+        private string path;
+        private List<Node> child;
+        private bool isFolder;
+
+        public Node(string root, bool isFolder)
+        {
+            if (isFolder)
+            {
+                name = Path.GetDirectoryName(root);
+            }
+            else
+            {
+                name = Path.GetFileName(root);
+            }
+            path = root;
+            this.isFolder = isFolder;
+            child = new List<Node>();
+
+        }
+
+        public void AddChild()
+        {
+            string[] files = null;
+            string[] folders = null;
+            try
+            {
+                files = Directory.GetFiles(path);
+                folders = Directory.GetDirectories(path);
+            }
+            catch { }
+            finally
+            {
+                for (int i = 0; i < files.Length; i++)
+                {
+                    child.Add(new Node(files[i], false));
+                }
+
+                for (int i = 0; i < folders.Length; i++)
+                {
+                    child.Add(new Node(folders[i], true));
+                }
+            }
+        }
+    }
+
+    public class Tree
+    {
+        private Node root;
+
+        public Tree(string root)
+        {
+            this.root = new Node(root, true);
+        }
+
+    }
 }

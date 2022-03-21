@@ -12,23 +12,33 @@ namespace PencerahanExplorer
 {
     public partial class FileFound : Form
     {
-        // hyperlink belum berupa list
-        private LinkLabel[] links;
-        public FileFound(string start_path, List<string> final_path)
+        public FileFound(string start_path, List<string> final_path, bool isFound)
         {
             InitializeComponent();
             label1.Text = "Starting Path : " + start_path;
-            links = new LinkLabel[final_path.Count];
-            for (int i = 0; i < links.Length; i++)
+            if (isFound)
             {
-                links[i] = new LinkLabel();
-                links[i].Text = final_path[i];
-                links[i].Links[0].LinkData = final_path[i];
-                links[i].AutoSize = true;
-                links[i].Location = new Point(50, 100 + (i*20));
-                Controls.Add(links[i]);
-                links[i].LinkClicked += new LinkLabelLinkClickedEventHandler(link_LinkClicked);
+                LinkLabel[] links = new LinkLabel[final_path.Count];
+                for (int i = 0; i < links.Length; i++)
+                {
+                    links[i] = new LinkLabel();
+                    links[i].Text = final_path[i];
+                    links[i].Links[0].LinkData = final_path[i];
+                    links[i].AutoSize = true;
+                    links[i].Location = new Point(50, 100 + (i * 20));
+                    Controls.Add(links[i]);
+                    links[i].LinkClicked += new LinkLabelLinkClickedEventHandler(link_LinkClicked);
+                }
             }
+            else
+            {
+                Label labelNotFound = new Label();
+                labelNotFound.Text = "Tidak ada path yang sesuai";
+                labelNotFound.AutoSize = true;
+                labelNotFound.Location = new Point(50, 100);
+                Controls.Add(labelNotFound);
+            }
+            
         }
 
         private void label1_Click(object sender, EventArgs e)
@@ -37,10 +47,13 @@ namespace PencerahanExplorer
         }
 
         private void link_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            //Console.WriteLine(e.Link.LinkData as string);
+        { 
             System.Diagnostics.Process.Start(e.Link.LinkData as string);
         }
 
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
