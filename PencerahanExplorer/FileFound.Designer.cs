@@ -41,6 +41,7 @@
             this.label1.Size = new System.Drawing.Size(109, 20);
             this.label1.TabIndex = 0;
             this.label1.Text = "Starting path :";
+            this.label1.Click += new System.EventHandler(this.label1_Click_1);
             // 
             // label2
             // 
@@ -51,7 +52,13 @@
             this.label2.TabIndex = 1;
             this.label2.Text = "List path :";
             // 
-
+            // linkLabel1
+            // 
+            this.linkLabel1.Location = new System.Drawing.Point(0, 0);
+            this.linkLabel1.Name = "linkLabel1";
+            this.linkLabel1.Size = new System.Drawing.Size(100, 23);
+            this.linkLabel1.TabIndex = 0;
+            // 
             // FileFound
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);

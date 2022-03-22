@@ -28,11 +28,21 @@ namespace PencerahanExplorer
                 string target_name = f1.target_name;
                 Console.WriteLine("Starting folder : " + path);
 
+                if (f1.method_choice == 0)
+                {
+                    // BFS
+                    BFS bfs = new BFS(path, target_name, true);
+                    FileFound f2 = new FileFound(path, bfs.pathList, bfs.isFound());
+                    Application.Run(f2);
+                    bfs.tree.display(bfs.tree.root);
+                }
+                else
+                {
+                    // DFS
 
-                BFS bfs = new BFS(path, target_name, true);
-                FileFound f2 = new FileFound(path, bfs.pathList, bfs.isFound());
-                Application.Run(f2);
-                bfs.tree.display(bfs.tree.root);
+                }
+
+                
                 /*
                 DFS dfs = new DFS(path, target_name);
                 if (dfs.isFound())
@@ -41,8 +51,7 @@ namespace PencerahanExplorer
                     Application.Run(f2);
                 }
                 */
-                //Console.WriteLine(bfs.tree.getRelativePath("C:\\Users\\ACER\\Documents", "C:\\Users\\ACER\\Documents\\GitHub"));
-
+                
             }
             else
             {

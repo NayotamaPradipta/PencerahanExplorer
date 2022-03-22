@@ -13,10 +13,15 @@ namespace PencerahanExplorer
     public partial class FileNameInput : Form
     {
         public string target_name;
+        public int method_choice;
+        // 0 -  untuk BFS
+        // 1 - untuk DFS
         public FileNameInput(string path)
         {
             InitializeComponent();
             textBox2.Text = path;
+            method_choice = -1;
+
         }
 
         private void label1_Click(object sender, EventArgs e)
@@ -31,8 +36,23 @@ namespace PencerahanExplorer
 
         private void button1_Click_1(object sender, EventArgs e)
         {
-            target_name = textBox1.Text.ToString();
-            Close();
+            if (method_choice != -1 && !String.IsNullOrEmpty(textBox1.Text))
+            {
+                target_name = textBox1.Text.ToString();
+                Close();
+            }
+            
         }
+
+        private void radioButton1_CheckedChanged(object sender, EventArgs e)
+        {
+            method_choice = 0;
+        }
+
+        private void radioButton2_CheckedChanged(object sender, EventArgs e)
+        {
+            method_choice = 1;
+        }
+
     }
 }
