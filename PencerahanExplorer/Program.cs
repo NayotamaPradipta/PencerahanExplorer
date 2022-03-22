@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
-using PencerahanExplorer;
 
 namespace PencerahanExplorer
 {
@@ -27,10 +26,12 @@ namespace PencerahanExplorer
                 Application.Run(f1);
                 string target_name = f1.target_name;
                 Console.WriteLine("Starting folder : " + path);
+
                 
                 Search.BFS bfs = new Search.BFS(path, target_name, true);
                 FileFound f2 = new FileFound(path, bfs.pathList, bfs.isFound());
                 Application.Run(f2);
+                bfs.tree.display(bfs.tree.root);
                 /*
                 Search.DFS dfs = new Search.DFS(path, target_name);
                 if (dfs.isFound())
@@ -39,6 +40,7 @@ namespace PencerahanExplorer
                     Application.Run(f2);
                 }
                 */
+                //Console.WriteLine(bfs.tree.getRelativePath("C:\\Users\\ACER\\Documents", "C:\\Users\\ACER\\Documents\\GitHub"));
 
             }
             else
@@ -58,15 +60,19 @@ namespace PencerahanExplorer
             private bool found;
             private string target_name;
             private Queue<string> queue;
+            private string start_path;
             public List<string> pathList;
+            public Tree.Tree tree;
 
             public BFS(string start_path, string target_name, bool findall)
             {
                 // inisialisasi nilai-nilai atribut
+                this.start_path = start_path;
                 found = false;
                 this.target_name = target_name;
                 queue = new Queue<string>();
                 pathList = new List<string>();
+                tree = new Tree.Tree(start_path);
 
                 queue.Enqueue(start_path);
                 if (findall)
@@ -85,6 +91,7 @@ namespace PencerahanExplorer
                         SearchBFS(head, findall);
                     }
                 }
+
 
             }
 
@@ -114,6 +121,10 @@ namespace PencerahanExplorer
                                 {
                                     found = true;
                                     pathList.Add(files[i]);
+                                    tree.addChild(files[i], tree.root, false);
+                                    //Console.WriteLine(tree.getRelativePath(start_path, files[i]));
+                                    //Console.WriteLine(Directory.GetParent(files[i]));
+                                    //Console.WriteLine(Path.GetPathRoot(files[i]) + ' ' + Path.GetPathRoot(files[i]).Length);
                                 }
                             }
                         }
@@ -126,6 +137,10 @@ namespace PencerahanExplorer
                                 {
                                     found = true;
                                     pathList.Add(files[i]);
+                                    tree.addChild(files[i], tree.root, false);
+                                    //Console.WriteLine(tree.getRelativePath(start_path, files[i]));
+                                    //Console.WriteLine(Directory.GetParent(files[i]));
+                                    //Console.WriteLine(Path.GetPathRoot(files[i]) + ' ' + Path.GetPathRoot(files[i]).Length);
                                 }
                                 else
                                 {
@@ -140,6 +155,8 @@ namespace PencerahanExplorer
                         for (int k = 0; k < folders.Length; k++)
                         {
                             queue.Enqueue(folders[k]);
+                            //Console.WriteLine(tree.getRelativePath(start_path, folders[k]));
+                            //tree.addChild(folders[k], tree.root, true);
                         }
                     }
                 }
@@ -257,63 +274,138 @@ namespace PencerahanExplorer
 }
 
 namespace Tree
-{
+{ 
+
     public class Node
     {
         private string name;
-        private string path;
+        private string full_path;
         private List<Node> child;
-        private bool isFolder;
+        public bool isFolder;
 
-        public Node(string root, bool isFolder)
+        public Node(string path, bool isFolder)
         {
-            if (isFolder)
+            this.full_path = path;
+            this.name = Path.GetDirectoryName(name);
+            child = new List<Node>();
+            this.isFolder = isFolder;
+        }
+
+        public string getName()
+        {
+            return name;
+        }
+
+        public string getPath()
+        {
+            return full_path;
+        }
+
+        public void addChild(string child_path, bool isFolder)
+        {
+            child.Add(new Node(child_path, isFolder));
+        }
+
+        public bool isChild(string child_name)
+        {
+            bool isChild = false;
+            foreach (Node c in child)
             {
-                name = Path.GetDirectoryName(root);
+                if (c.getName() == child_name)
+                {
+                    isChild = true;
+                }
+            }
+            return isChild;
+        }
+
+        public Node getChild(string child_name)
+        {
+            bool found = false;
+            int i = 0;
+            while (i < child.Count && !found)
+            {
+                if (child[i].getName() == child_name)
+                {
+                    found = true;
+                }
+                else
+                {
+                    i++;
+                }
+            }
+            if (found)
+            {
+                return child[i];
             }
             else
             {
-                name = Path.GetFileName(root);
+                return null;
             }
-            path = root;
-            this.isFolder = isFolder;
-            child = new List<Node>();
-
         }
 
-        public void AddChild()
+
+        public int sumChild()
         {
-            string[] files = null;
-            string[] folders = null;
-            try
-            {
-                files = Directory.GetFiles(path);
-                folders = Directory.GetDirectories(path);
-            }
-            catch { }
-            finally
-            {
-                for (int i = 0; i < files.Length; i++)
-                {
-                    child.Add(new Node(files[i], false));
-                }
-
-                for (int i = 0; i < folders.Length; i++)
-                {
-                    child.Add(new Node(folders[i], true));
-                }
-            }
+            return child.Count;
         }
-    }
 
+        public List<Node> getChildList()
+        {
+            return child;
+        }
+
+    }
     public class Tree
     {
-        private Node root;
+        public Node root;
 
         public Tree(string root)
         {
             this.root = new Node(root, true);
         }
 
+        public void addChild(string child_full_path, Node current_path, bool isfolder)
+        {
+            string relative_path = getRelativePath(current_path.getPath(), child_full_path);
+            string root_name = Path.GetPathRoot(relative_path).TrimEnd((char)92);
+            if (current_path.getChild(root_name) == null)
+            {
+                // basis
+                // tidak ada child dengan nama yang sama pada Node, buat child baru
+                current_path.addChild(child_full_path, isfolder);
+            }
+            else
+            {
+                // rekurens
+                // terdapat child dengan nama yang sama, pindah ke node tersebut
+                addChild(child_full_path, current_path.getChild(root_name), isfolder);
+            }
+        }
+
+        public void display(Node n)
+        {
+            Console.WriteLine(n.getName());
+            if (n.sumChild() == 0)
+            {
+                // do nothing
+                // basis
+            }
+            else
+            { 
+                for (int i = 0; i < n.sumChild(); i++)
+                {
+                    display(n.getChildList()[i]);
+                }
+            }
+        }
+
+        public string getRelativePath(string relativeTo, string path)
+        {
+            string relative_path = path.Remove(0, relativeTo.Length + 1);
+            return relative_path;
+        }
+
+        
     }
 }
