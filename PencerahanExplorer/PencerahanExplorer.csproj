@@ -58,6 +58,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Search.cs" />
+    <Compile Include="Tree.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
