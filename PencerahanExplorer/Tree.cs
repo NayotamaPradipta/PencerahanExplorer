@@ -18,7 +18,8 @@ namespace Tree
         public Node(string path, bool isFolder)
         {
             this.full_path = path;
-            this.name = Path.GetDirectoryName(name);
+            string[] pathList = path.Split((char)92);
+            this.name = pathList[pathList.Length - 1];
             child = new List<Node>();
             this.isFolder = isFolder;
         }
@@ -36,19 +37,6 @@ namespace Tree
         public void addChild(string child_path, bool isFolder)
         {
             child.Add(new Node(child_path, isFolder));
-        }
-
-        public bool isChild(string child_name)
-        {
-            bool isChild = false;
-            foreach (Node c in child)
-            {
-                if (c.getName() == child_name)
-                {
-                    isChild = true;
-                }
-            }
-            return isChild;
         }
 
         public Node getChild(string child_name)
@@ -87,6 +75,7 @@ namespace Tree
             return child;
         }
 
+
     }
     public class Tree
     {
@@ -100,8 +89,14 @@ namespace Tree
         public void addChild(string child_full_path, Node current_path, bool isfolder)
         {
             string relative_path = getRelativePath(current_path.getPath(), child_full_path);
-            string root_name = Path.GetPathRoot(relative_path).TrimEnd((char)92);
-            if (current_path.getChild(root_name) == null)
+            string[] child_path_list = relative_path.Split((char)92);
+            /*
+            Console.WriteLine("Child path : " + child_full_path);
+            Console.WriteLine("Current path : " + current_path.getPath());
+            Console.WriteLine("Relative path : " + relative_path);
+            Console.WriteLine("Root Name : " + child_path_list[0]);
+            */
+            if (current_path.getChild(child_path_list[0]) == null)
             {
                 // basis
                 // tidak ada child dengan nama yang sama pada Node, buat child baru
@@ -111,8 +106,26 @@ namespace Tree
             {
                 // rekurens
                 // terdapat child dengan nama yang sama, pindah ke node tersebut
-                addChild(child_full_path, current_path.getChild(root_name), isfolder);
+                addChild(child_full_path, current_path.getChild(child_path_list[0]), isfolder);
             }
+            /*
+            if (child_path_list.Length == 1)
+            {
+                // basis
+                // sampai pada leaf node
+                current_path.addChild(child_full_path, isfolder);
+            }
+            else
+            {
+                // rekurens
+                if (current_path.getChild(child_path_list[0]) == null)
+                {
+                    // tidak ada child dengan nama yang sama pada Node, buat child baru
+                    current_path.addChild(child_full_path, isfolder);
+                    // lanjutkan ke node berikutnya
+                }
+                addChild(child_full_path, current_path.getChild(child_path_list[0]), isfolder);
+            } */
         }
 
         public void display(Node n)
@@ -125,9 +138,9 @@ namespace Tree
             }
             else
             {
-                for (int i = 0; i < n.sumChild(); i++)
+                foreach(Node c in n.getChildList())
                 {
-                    display(n.getChildList()[i]);
+                    display(c);
                 }
             }
         }
@@ -137,7 +150,6 @@ namespace Tree
             string relative_path = path.Remove(0, relativeTo.Length + 1);
             return relative_path;
         }
-
 
     }
 }

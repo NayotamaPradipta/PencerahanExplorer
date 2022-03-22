@@ -76,11 +76,12 @@ namespace Search
                             {
                                 found = true;
                                 pathList.Add(files[i]);
-                                tree.addChild(files[i], tree.root, false);
+                                
                                 //Console.WriteLine(tree.getRelativePath(start_path, files[i]));
                                 //Console.WriteLine(Directory.GetParent(files[i]));
                                 //Console.WriteLine(Path.GetPathRoot(files[i]) + ' ' + Path.GetPathRoot(files[i]).Length);
                             }
+                            tree.addChild(files[i], tree.root, false);
                         }
                     }
                     else
@@ -92,7 +93,7 @@ namespace Search
                             {
                                 found = true;
                                 pathList.Add(files[i]);
-                                tree.addChild(files[i], tree.root, false);
+                                
                                 //Console.WriteLine(tree.getRelativePath(start_path, files[i]));
                                 //Console.WriteLine(Directory.GetParent(files[i]));
                                 //Console.WriteLine(Path.GetPathRoot(files[i]) + ' ' + Path.GetPathRoot(files[i]).Length);
@@ -101,6 +102,7 @@ namespace Search
                             {
                                 i++;
                             }
+                            tree.addChild(files[i], tree.root, false);
                         }
                     }
                 }
@@ -111,7 +113,7 @@ namespace Search
                     {
                         queue.Enqueue(folders[k]);
                         //Console.WriteLine(tree.getRelativePath(start_path, folders[k]));
-                        //tree.addChild(folders[k], tree.root, true);
+                        tree.addChild(folders[k], tree.root, true);
                     }
                 }
             }
