@@ -164,33 +164,44 @@ namespace PencerahanExplorer
             // Inisialisasi atribut
             private bool found;
             private string target_name;
-            public string target_path; // sementara public
+            public List<string> pathList; // sementara public
             private Stack<string> stack; // untuk keep track current path
             private List<string> output; // untuk keep track visited path
 
-            public DFS(string start_path, string target_name)
+            public DFS(string start_path, string target_name, bool findall)
             {
                 // Inisialisasi atribut
                 found = false;
                 this.target_name = target_name;
-                target_path = "NULL";
+                pathList = new List<string>();
                 stack = new Stack<string>();
                 stack.Push(start_path);
                 output = new List<string>();
                 output.Add(start_path);
 
                 // Loop DFS utama
-                while (!found && stack.Count > 0)
+                if (findall)
                 {
-                    string top = stack.Pop();
-                    SearchDFS(top);
+                    while (stack.Count > 0)
+                    {
+                        string top = stack.Pop();
+                        SearchDFS(top, findall);
+                    }
                 }
+                else
+                {
+                    while (!found && stack.Count > 0)
+                    {
+                        string top = stack.Pop();
+                        SearchDFS(top, findall);
+                    }
+                }
+
             }
 
-            private void SearchDFS(string path)
+            private void SearchDFS(string path, bool findall)
             {
                 string[] files = null;
-
                 try
                 {
                     // Exception handling untuk restricted folder
@@ -203,19 +214,36 @@ namespace PencerahanExplorer
                     if (files != null)
                     {
                         // Iterate over files in current path
-                        int i = 0;
-                        while (!found && i < files.Length)
+                        int i;
+                        if (findall)
                         {
-                            if (Path.GetFileName(files[i]) == target_name)
+                            for (i = 0; i < files.Length; i++)
                             {
-                                found = true; 
-                                target_path = files[i]; // Pencarian selesai
+                                if (Path.GetFileName(files[i]) == target_name)
+                                {
+                                    found = true;
+                                    pathList.Add(files[i]);
+                                }
                             }
-                            else
+
+                        }
+                        else // cari satu file
+                        {
+                            i = 0;
+                            while (!found && i < files.Length)
                             {
-                                i++;
+                                if (Path.GetFileName(files[i]) == target_name)
+                                {
+                                    found = true;
+                                    pathList.Add(files[i]); // Pencarian selesai
+                                }
+                                else
+                                {
+                                    i++;
+                                }
                             }
                         }
+
 
                         // File not found in current path, lanjut ke path selanjutnya
                         if (!found)
@@ -231,7 +259,7 @@ namespace PencerahanExplorer
                                 {
                                     stack.Push(folders[k]);
                                     output.Add(folders[k]);
-                                    SearchDFS(folders[k]);
+                                    SearchDFS(folders[k], findall);
                                 }
                             }
                             stack.Pop();
@@ -245,9 +273,9 @@ namespace PencerahanExplorer
                 return found;
             }
 
-            public string get_target_path() // Ketemunya di path mana
+            public List<string> get_target_path() // Ketemunya di path mana
             {
-                return target_path;
+                return pathList;
             }
 
 
