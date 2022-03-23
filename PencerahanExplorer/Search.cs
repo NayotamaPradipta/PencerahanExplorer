@@ -89,6 +89,7 @@ namespace Search
                         i = 0;
                         while (!found && i < files.Length)
                         {
+                            tree.addChild(files[i], tree.root, false);
                             if (Path.GetFileName(files[i]) == target_name)
                             {
                                 found = true;
@@ -102,7 +103,7 @@ namespace Search
                             {
                                 i++;
                             }
-                            tree.addChild(files[i], tree.root, false);
+                            
                         }
                     }
                 }
