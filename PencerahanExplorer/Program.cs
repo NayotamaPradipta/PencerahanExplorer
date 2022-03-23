@@ -36,14 +36,14 @@ namespace PencerahanExplorer
                         BFS bfs = new BFS(path, target_name, true);
                         FileFound f2 = new FileFound(path, bfs.pathList, bfs.isFound());
                         Application.Run(f2);
-                        bfs.tree.display(bfs.tree.root);
+                        bfs.tree.displayTree();
                     }
                     else
                     {
                         BFS bfs = new BFS(path, target_name, false);
                         FileFound f2 = new FileFound(path, bfs.pathList, bfs.isFound());
                         Application.Run(f2);
-                        bfs.tree.display(bfs.tree.root);
+                        bfs.tree.displayTree();
                     }
                     
                 }
@@ -62,6 +62,7 @@ namespace PencerahanExplorer
                         Application.Run(f2);
                     }
                 }
+                
             }
             else
             {

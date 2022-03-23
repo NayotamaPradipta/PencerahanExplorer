@@ -80,10 +80,20 @@ namespace Tree
     public class Tree
     {
         public Node root;
+        private Microsoft.Msagl.GraphViewerGdi.GViewer viewer;
+        public Microsoft.Msagl.Drawing.Graph graph;
+
+        // misalkan untuk node yang sudah diperiksa diwarnai merah
+        // dan untuk yang sudah masuk ke antrian diwarnai biru
 
         public Tree(string root)
         {
             this.root = new Node(root, true);
+            //create a viewer object
+            viewer = new Microsoft.Msagl.GraphViewerGdi.GViewer();
+            //create a graph object
+            graph = new Microsoft.Msagl.Drawing.Graph("graph");
+            //create the graph content, along with tree building
         }
 
         public void addChild(string child_full_path, Node current_path, bool isfolder)
@@ -96,11 +106,13 @@ namespace Tree
             Console.WriteLine("Relative path : " + relative_path);
             Console.WriteLine("Root Name : " + child_path_list[0]);
             */
+            
             if (current_path.getChild(child_path_list[0]) == null)
             {
                 // basis
                 // tidak ada child dengan nama yang sama pada Node, buat child baru
                 current_path.addChild(child_full_path, isfolder);
+                graph.AddEdge(current_path.getName(), child_path_list[0]);
             }
             else
             {
@@ -108,6 +120,7 @@ namespace Tree
                 // terdapat child dengan nama yang sama, pindah ke node tersebut
                 addChild(child_full_path, current_path.getChild(child_path_list[0]), isfolder);
             }
+            graph.FindNode(current_path.getName()).Attr.FillColor = Microsoft.Msagl.Drawing.Color.Blue;
             /*
             if (child_path_list.Length == 1)
             {
@@ -149,6 +162,22 @@ namespace Tree
         {
             string relative_path = path.Remove(0, relativeTo.Length + 1);
             return relative_path;
+        }
+
+        public void displayTree()
+        {
+            //create a form
+            System.Windows.Forms.Form form = new System.Windows.Forms.Form();
+            viewer.FitGraphBoundingBox();
+            //bind the graph to the viewer
+            viewer.Graph = graph;
+            //associate the viewer with the form
+            form.SuspendLayout();
+            viewer.Dock = System.Windows.Forms.DockStyle.Fill;
+            form.Controls.Add(viewer);
+            form.ResumeLayout();
+            //show the form
+            System.Windows.Forms.Application.Run(form);
         }
 
     }
