@@ -38,13 +38,15 @@ namespace PencerahanExplorer
                 }
                 else
                 {
-                    // DFS
+                    DFS dfs = new DFS(path, target_name, true);
+                    FileFound f2 = new FileFound(path, dfs.pathList, dfs.isFound());
+                    Application.Run(f2);
 
                 }
 
                 
                 /*
-                DFS dfs = new DFS(path, target_name);
+                DFS dfs = new DFS(path, target_name, true);
                 if (dfs.isFound())
                 {
                     FileFound f2 = new FileFound(path, dfs.target_path);
