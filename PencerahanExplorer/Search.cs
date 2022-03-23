@@ -177,10 +177,12 @@ namespace Search
         private void SearchDFS(string path, bool findall)
         {
             string[] files = null;
+            string[] folders = null;
             try
             {
                 // Exception handling untuk restricted folder
                 files = Directory.GetFiles(path);
+                folders = Directory.GetDirectories(path);
             }
             catch { }
 
@@ -224,9 +226,9 @@ namespace Search
 
 
                     // File not found in current path, lanjut ke path selanjutnya
-                    if (!found)
+                    if (!found || folders != null)
                     {
-                        string[] folders = Directory.GetDirectories(path);
+                        
                         for (int k = 0; k < folders.Length; k++)
                         {
                             if (output.Contains(folders[k])) // Cek apakah sudah visited
@@ -240,7 +242,6 @@ namespace Search
                                 SearchDFS(folders[k], findall);
                             }
                         }
-                        stack.Pop();
                     }
                 }
             }
