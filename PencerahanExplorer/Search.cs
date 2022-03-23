@@ -196,7 +196,10 @@ namespace Search
                             if (Path.GetFileName(files[i]) == target_name)
                             {
                                 found = true;
-                                pathList.Add(files[i]);
+                                if (!pathList.Contains(files[i]))
+                                {
+                                    pathList.Add(files[i]);
+                                }
                             }
                         }
 
