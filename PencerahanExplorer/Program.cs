@@ -60,12 +60,20 @@ namespace PencerahanExplorer
                         DFS dfs = new DFS(path, target_name, true);
                         FileFound f2 = new FileFound(path, dfs.pathList, dfs.isFound());
                         Application.Run(f2);
+                        if (dfs.isFound())
+                        {
+                            dfs.tree.displayTree(dfs.output, dfs.pathList);
+                        }
                     }
                     else
                     {
                         DFS dfs = new DFS(path, target_name, false);
                         FileFound f2 = new FileFound(path, dfs.pathList, dfs.isFound());
                         Application.Run(f2);
+                        if (dfs.isFound())
+                        {
+                            dfs.tree.displayTree(dfs.output, dfs.pathList);
+                        }
                     }
                 }
                 

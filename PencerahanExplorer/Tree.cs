@@ -107,20 +107,23 @@ namespace Tree
         public void addChild(string child_full_path, Node current_path, bool isfolder)
         {
             string relative_path = getRelativePath(current_path.getPath(), child_full_path);
-            string[] child_path_list = relative_path.Split((char)92);
-            
-            if (current_path.getChild(child_path_list[0]) == null)
+            if (relative_path != null )
             {
-                // basis
-                // tidak ada child dengan nama yang sama pada Node, buat child baru
-                current_path.addChild(child_full_path, isfolder);
-                graph.AddEdge(current_path.getName(), child_path_list[0]);
-            }
-            else
-            {
-                // rekurens
-                // terdapat child dengan nama yang sama, pindah ke node tersebut
-                addChild(child_full_path, current_path.getChild(child_path_list[0]), isfolder);
+                string[] child_path_list = relative_path.Split((char)92);
+
+                if (current_path.getChild(child_path_list[0]) == null)
+                {
+                    // basis
+                    // tidak ada child dengan nama yang sama pada Node, buat child baru
+                    current_path.addChild(child_full_path, isfolder);
+                    graph.AddEdge(current_path.getName(), child_path_list[0]);
+                }
+                else
+                {
+                    // rekurens
+                    // terdapat child dengan nama yang sama, pindah ke node tersebut
+                    addChild(child_full_path, current_path.getChild(child_path_list[0]), isfolder);
+                }
             }
         }
 
@@ -147,8 +150,15 @@ namespace Tree
 
         public string getRelativePath(string relativeTo, string path)
         {
-            string relative_path = path.Remove(0, relativeTo.Length + 1);
-            return relative_path;
+            if (relativeTo.Length == path.Length)
+            {
+                return null;
+            }
+            else
+            {
+                string relative_path = path.Remove(0, relativeTo.Length + 1);
+                return relative_path;
+            }
         }
 
         public void giveColor(string node_name, string color)
@@ -167,7 +177,6 @@ namespace Tree
         {
             // mengupdate warna dari semua parent
             Node p = findNode(path, root);
-            p = p.getParent();
             while (p != null)
             {
                 giveColor(p.getName(), "Blue");
@@ -177,17 +186,18 @@ namespace Tree
 
         public void displayTree(List<string> visited, List<string> pathList)
         {
-            // color every visited nodes
-            
+            // color every visited 
+
             foreach (string s in visited)
             {
                 giveColor(Path.GetFileName(s), "Red");
-            } 
+            }
 
             foreach (string c in pathList)
             {
                 updateParentColor(c);
             }
+
             //create a form
             System.Windows.Forms.Form form = new System.Windows.Forms.Form();
             viewer.FitGraphBoundingBox();

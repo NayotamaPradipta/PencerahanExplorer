@@ -54,8 +54,6 @@ namespace Search
 
         private void SearchBFS(string path, bool findall)
         {
-            bool foundHere = false;
-            tree.giveColor(Path.GetFileName(path), "Blue");
             string[] files = null;
             string[] folders = null;
             try
@@ -80,9 +78,7 @@ namespace Search
                             if (Path.GetFileName(files[i]) == target_name)
                             {
                                 found = true;
-                                foundHere = true;
                                 pathList.Add(files[i]);
-                                tree.giveColor(Path.GetFileName(files[i]), "Blue");
                             }
                             else
                             {
@@ -99,9 +95,7 @@ namespace Search
                             if (Path.GetFileName(files[i]) == target_name)
                             {
                                 found = true;
-                                foundHere = true;
                                 pathList.Add(files[i]);
-                                tree.graph.FindNode(Path.GetFileName(files[i])).Attr.FillColor = Microsoft.Msagl.Drawing.Color.Blue;
                             }
                             else
                             {
@@ -122,10 +116,7 @@ namespace Search
                         tree.addChild(folders[k], tree.root, true);
                     }
                 }
-                if (!foundHere)
-                {
-                    tree.giveColor(Path.GetFileName(path), "Red");
-                }
+                visited.Add(path);
             }
         }
 
@@ -146,7 +137,8 @@ namespace Search
         private string target_name;
         public List<string> pathList; // sementara public
         private Stack<string> stack; // untuk keep track current path
-        private List<string> output; // untuk keep track visited path
+        public List<string> output; // untuk keep track visited path
+        public Tree.Tree tree;
 
         public DFS(string start_path, string target_name, bool findall)
         {
@@ -158,6 +150,7 @@ namespace Search
             stack.Push(start_path);
             output = new List<string>();
             output.Add(start_path);
+            tree = new Tree.Tree(start_path);
 
             // Loop DFS utama
             if (findall)
@@ -201,6 +194,7 @@ namespace Search
                     {
                         for (i = 0; i < files.Length; i++)
                         {
+                            tree.addChild(files[i], tree.root, false);
                             if (Path.GetFileName(files[i]) == target_name)
                             {
                                 found = true;
@@ -209,6 +203,7 @@ namespace Search
                                     pathList.Add(files[i]);
                                 }
                             }
+                            output.Add(files[i]);
                         }
 
                     }
@@ -217,6 +212,8 @@ namespace Search
                         i = 0;
                         while (!found && i < files.Length)
                         {
+                            tree.addChild(files[i], tree.root, false);
+                            output.Add(files[i]);
                             if (Path.GetFileName(files[i]) == target_name)
                             {
                                 found = true;
@@ -236,19 +233,12 @@ namespace Search
                         
                         for (int k = 0; k < folders.Length; k++)
                         {
-                            if (output.Contains(folders[k])) // Cek apakah sudah visited
-                            {
-                                // skip folder
-                            }
-                            else
-                            {
-                                stack.Push(folders[k]);
-                                output.Add(folders[k]);
-                                SearchDFS(folders[k], findall);
-                            }
+                            tree.addChild(folders[k], tree.root, true);
+                            stack.Push(folders[k]);
                         }
                     }
                 }
+                output.Add(path);
             }
         }
 
