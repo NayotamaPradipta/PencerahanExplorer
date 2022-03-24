@@ -18,6 +18,7 @@ namespace Search
         private string start_path;
         public List<string> pathList;
         public Tree.Tree tree;
+        public List<string> visited;
 
         public BFS(string start_path, string target_name, bool findall)
         {
@@ -28,6 +29,7 @@ namespace Search
             queue = new Queue<string>();
             pathList = new List<string>();
             tree = new Tree.Tree(start_path);
+            visited = new List<string>();
 
             queue.Enqueue(start_path);
             if (findall)
@@ -52,6 +54,8 @@ namespace Search
 
         private void SearchBFS(string path, bool findall)
         {
+            bool foundHere = false;
+            tree.giveColor(Path.GetFileName(path), "Blue");
             string[] files = null;
             string[] folders = null;
             try
@@ -72,16 +76,23 @@ namespace Search
                     {
                         for (i = 0; i < files.Length; i++)
                         {
+                            tree.addChild(files[i], tree.root, false);
                             if (Path.GetFileName(files[i]) == target_name)
                             {
                                 found = true;
+                                foundHere = true;
                                 pathList.Add(files[i]);
-                                
+                                tree.giveColor(Path.GetFileName(files[i]), "Blue");
+
                                 //Console.WriteLine(tree.getRelativePath(start_path, files[i]));
                                 //Console.WriteLine(Directory.GetParent(files[i]));
                                 //Console.WriteLine(Path.GetPathRoot(files[i]) + ' ' + Path.GetPathRoot(files[i]).Length);
                             }
-                            tree.addChild(files[i], tree.root, false);
+                            else
+                            {
+                                visited.Add(files[i]);
+                            }
+                            
                         }
                     }
                     else
@@ -93,18 +104,22 @@ namespace Search
                             if (Path.GetFileName(files[i]) == target_name)
                             {
                                 found = true;
+                                foundHere = true;
                                 pathList.Add(files[i]);
-                                
+                                tree.graph.FindNode(Path.GetFileName(files[i])).Attr.FillColor = Microsoft.Msagl.Drawing.Color.Blue;
+
                                 //Console.WriteLine(tree.getRelativePath(start_path, files[i]));
                                 //Console.WriteLine(Directory.GetParent(files[i]));
                                 //Console.WriteLine(Path.GetPathRoot(files[i]) + ' ' + Path.GetPathRoot(files[i]).Length);
                             }
                             else
                             {
+                                visited.Add(files[i]);
                                 i++;
                             }
                             
                         }
+                      
                     }
                 }
                 // file not found in current path, enqueue subdirectories
@@ -117,9 +132,14 @@ namespace Search
                         tree.addChild(folders[k], tree.root, true);
                     }
                 }
+                if (!foundHere)
+                {
+                    tree.giveColor(Path.GetFileName(path), "Red");
+                }
             }
         }
 
+        
         public bool isFound()
         {
             return found;

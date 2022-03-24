@@ -13,6 +13,7 @@ namespace Tree
         private string name;
         private string full_path;
         private List<Node> child;
+        private Node parent;
         public bool isFolder;
 
         public Node(string path, bool isFolder)
@@ -22,6 +23,7 @@ namespace Tree
             this.name = pathList[pathList.Length - 1];
             child = new List<Node>();
             this.isFolder = isFolder;
+            this.parent = null;
         }
 
         public string getName()
@@ -34,9 +36,21 @@ namespace Tree
             return full_path;
         }
 
+        public void setParent(Node p)
+        {
+            parent = p;
+        }
+
+        public Node getParent()
+        {
+            return parent;
+        }
+
         public void addChild(string child_path, bool isFolder)
         {
-            child.Add(new Node(child_path, isFolder));
+            Node c = new Node(child_path, isFolder);
+            c.setParent(this);
+            child.Add(c);
         }
 
         public Node getChild(string child_name)
@@ -93,6 +107,7 @@ namespace Tree
             viewer = new Microsoft.Msagl.GraphViewerGdi.GViewer();
             //create a graph object
             graph = new Microsoft.Msagl.Drawing.Graph("graph");
+            graph.AddNode(this.root.getName());
             //create the graph content, along with tree building
         }
 
@@ -120,41 +135,26 @@ namespace Tree
                 // terdapat child dengan nama yang sama, pindah ke node tersebut
                 addChild(child_full_path, current_path.getChild(child_path_list[0]), isfolder);
             }
-            graph.FindNode(current_path.getName()).Attr.FillColor = Microsoft.Msagl.Drawing.Color.Blue;
-            /*
-            if (child_path_list.Length == 1)
-            {
-                // basis
-                // sampai pada leaf node
-                current_path.addChild(child_full_path, isfolder);
-            }
-            else
-            {
-                // rekurens
-                if (current_path.getChild(child_path_list[0]) == null)
-                {
-                    // tidak ada child dengan nama yang sama pada Node, buat child baru
-                    current_path.addChild(child_full_path, isfolder);
-                    // lanjutkan ke node berikutnya
-                }
-                addChild(child_full_path, current_path.getChild(child_path_list[0]), isfolder);
-            } */
         }
 
-        public void display(Node n)
+        public Node findNode(string path, Node n)
         {
-            Console.WriteLine(n.getName());
-            if (n.sumChild() == 0)
+            Node res = null;
+            if (n.getPath() == path)
             {
-                // do nothing
-                // basis
+                return n;
             }
             else
             {
                 foreach(Node c in n.getChildList())
                 {
-                    display(c);
+                    res = findNode(path, c);
+                    if (res != null)
+                    {
+                        return res;
+                    }
                 }
+                return res;
             }
         }
 
@@ -164,8 +164,43 @@ namespace Tree
             return relative_path;
         }
 
-        public void displayTree()
+        public void giveColor(string node_name, string color)
         {
+            if (color == "Blue")
+            {
+                graph.FindNode(node_name).Attr.FillColor = Microsoft.Msagl.Drawing.Color.Blue;
+            }
+            else if (color == "Red")
+            {
+                graph.FindNode(node_name).Attr.FillColor = Microsoft.Msagl.Drawing.Color.Red;
+            }
+        }
+
+        public void updateParentColor(string path)
+        {
+            // mengupdate warna dari semua parent
+            Node p = findNode(path, root);
+            p = p.getParent();
+            while (p != null)
+            {
+                giveColor(p.getName(), "Blue");
+                p = p.getParent();
+            }
+        }
+
+        public void displayTree(List<string> visited, List<string> pathList)
+        {
+            // color every visited nodes
+            
+            foreach (string s in visited)
+            {
+                giveColor(Path.GetFileName(s), "Red");
+            } 
+
+            foreach (string c in pathList)
+            {
+                updateParentColor(c);
+            }
             //create a form
             System.Windows.Forms.Form form = new System.Windows.Forms.Form();
             viewer.FitGraphBoundingBox();
