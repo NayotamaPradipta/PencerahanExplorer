@@ -77,13 +77,6 @@ namespace Tree
                 return null;
             }
         }
-
-
-        public int sumChild()
-        {
-            return child.Count;
-        }
-
         public List<Node> getChildList()
         {
             return child;
@@ -115,12 +108,6 @@ namespace Tree
         {
             string relative_path = getRelativePath(current_path.getPath(), child_full_path);
             string[] child_path_list = relative_path.Split((char)92);
-            /*
-            Console.WriteLine("Child path : " + child_full_path);
-            Console.WriteLine("Current path : " + current_path.getPath());
-            Console.WriteLine("Relative path : " + relative_path);
-            Console.WriteLine("Root Name : " + child_path_list[0]);
-            */
             
             if (current_path.getChild(child_path_list[0]) == null)
             {

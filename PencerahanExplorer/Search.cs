@@ -83,16 +83,11 @@ namespace Search
                                 foundHere = true;
                                 pathList.Add(files[i]);
                                 tree.giveColor(Path.GetFileName(files[i]), "Blue");
-
-                                //Console.WriteLine(tree.getRelativePath(start_path, files[i]));
-                                //Console.WriteLine(Directory.GetParent(files[i]));
-                                //Console.WriteLine(Path.GetPathRoot(files[i]) + ' ' + Path.GetPathRoot(files[i]).Length);
                             }
                             else
                             {
                                 visited.Add(files[i]);
                             }
-                            
                         }
                     }
                     else
@@ -107,10 +102,6 @@ namespace Search
                                 foundHere = true;
                                 pathList.Add(files[i]);
                                 tree.graph.FindNode(Path.GetFileName(files[i])).Attr.FillColor = Microsoft.Msagl.Drawing.Color.Blue;
-
-                                //Console.WriteLine(tree.getRelativePath(start_path, files[i]));
-                                //Console.WriteLine(Directory.GetParent(files[i]));
-                                //Console.WriteLine(Path.GetPathRoot(files[i]) + ' ' + Path.GetPathRoot(files[i]).Length);
                             }
                             else
                             {
@@ -128,7 +119,6 @@ namespace Search
                     for (int k = 0; k < folders.Length; k++)
                     {
                         queue.Enqueue(folders[k]);
-                        //Console.WriteLine(tree.getRelativePath(start_path, folders[k]));
                         tree.addChild(folders[k], tree.root, true);
                     }
                 }
@@ -143,11 +133,6 @@ namespace Search
         public bool isFound()
         {
             return found;
-        }
-
-        public List<string> get_target_path()
-        {
-            return pathList;
         }
     }
 
@@ -271,12 +256,5 @@ namespace Search
         {
             return found;
         }
-
-        public List<string> get_target_path() // Ketemunya di path mana
-        {
-            return pathList;
-        }
-
-
     }
 }
