@@ -170,13 +170,18 @@ namespace Tree
             else if (color == "Red")
             {
                 graph.FindNode(node_name).Attr.FillColor = Microsoft.Msagl.Drawing.Color.Red;
-            }
+            } else if (color == "Turqoise")
+            {
+                graph.FindNode(node_name).Attr.FillColor = Microsoft.Msagl.Drawing.Color.Turquoise;
+            } 
         }
 
         public void updateParentColor(string path)
         {
             // mengupdate warna dari semua parent
             Node p = findNode(path, root);
+            giveColor(p.getName(), "Turqoise"); // Warna Target Filenya dibedain
+            p = p.getParent();
             while (p != null)
             {
                 giveColor(p.getName(), "Blue");
@@ -185,9 +190,7 @@ namespace Tree
         }
 
         public void displayTree(List<string> visited, List<string> pathList)
-        {
-            // color every visited 
-
+        { 
             foreach (string s in visited)
             {
                 giveColor(Path.GetFileName(s), "Red");
