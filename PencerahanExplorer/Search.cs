@@ -153,25 +153,51 @@ namespace Search
             tree = new Tree.Tree(start_path);
 
             // Loop DFS utama
-            if (findall)
-            {
-                while (stack.Count > 0)
-                {
-                    string top = stack.Pop();
-                    SearchDFS(top, findall);
-                }
-            }
-            else
-            {
-                while (!found && stack.Count > 0)
-                {
-                    string top = stack.Pop();
-                    SearchDFS(top, findall);
-                }
-            }
+            SearchDFS(stack.Peek(), findall);
 
         }
-
+        private void CheckFileInDirectory(string[] files, bool findall)
+        {
+            if (files != null)
+            {
+                Array.Sort(files);
+                int j = 0;
+                if (!findall)
+                {
+                    while (!found && j < files.Length)
+                    {
+                        tree.addChild(files[j], tree.root, false);
+                        output.Add(files[j]);
+                        if (Path.GetFileName(files[j]) == target_name)
+                        {
+                            found = true;
+                            pathList.Add(files[j]);
+                        }
+                        else
+                        {
+                            j++;
+                        }
+                    }
+                }
+                else
+                {
+                    while (j < files.Length)
+                    {
+                        tree.addChild(files[j], tree.root, false);
+                        output.Add(files[j]);
+                        if (Path.GetFileName(files[j]) == target_name)
+                        {
+                            pathList.Add(files[j]);
+                        }
+                        else
+                        {
+                            j++;
+                        }
+                    }
+                }
+                
+            }
+        }
         private void SearchDFS(string path, bool findall)
         {
             string[] files = null;
@@ -186,61 +212,57 @@ namespace Search
 
             finally
             {
-                if (files != null)
+
+                if (folders.Length != 0)
                 {
-                    // Iterate over files in current path
-                    int i;
-                    if (findall)
+                    Array.Sort(folders);
+                    int i = 0;
+                    while (i < folders.Length && output.Contains(folders[i]))
                     {
-                        for (i = 0; i < files.Length; i++)
-                        {
-                            tree.addChild(files[i], tree.root, false);
-                            if (Path.GetFileName(files[i]) == target_name)
-                            {
-                                found = true;
-                                if (!pathList.Contains(files[i]))
-                                {
-                                    pathList.Add(files[i]);
-                                }
-                            }
-                            output.Add(files[i]);
-                        }
-
+                        i++;
                     }
-                    else // cari satu file
+                    
+                    if (i != folders.Length)
                     {
-                        i = 0;
-                        while (!found && i < files.Length)
-                        {
-                            tree.addChild(files[i], tree.root, false);
-                            output.Add(files[i]);
-                            if (Path.GetFileName(files[i]) == target_name)
-                            {
-                                found = true;
-                                pathList.Add(files[i]); // Pencarian selesai
-                            }
-                            else
-                            {
-                                i++;
-                            }
-                        }
+                        tree.addChild(folders[i], tree.root, true);
+                        stack.Push(folders[i]);
+                        output.Add(folders[i]);
+                        SearchDFS(stack.Peek(), findall);
                     }
-
-
-                    // File not found in current path, lanjut ke path selanjutnya
-                    if (!found || folders != null)
+                    else
                     {
-                        
-                        for (int k = 0; k < folders.Length; k++)
+                        if (stack.Count > 1)
                         {
-                            tree.addChild(folders[k], tree.root, true);
-                            stack.Push(folders[k]);
+                            stack.Pop();
+                            SearchDFS(stack.Peek(), findall);
+                        }
+                        else // Start Path
+                        {
+                            CheckFileInDirectory(files, findall);
+                            if (!found)
+                            {
+
+                            }
                         }
                     }
                 }
-                output.Add(path);
+                else
+                {
+                    if (files != null)
+                    {
+                        CheckFileInDirectory(files, findall);
+                    }
+                    if (!found)
+                    {
+                        if (stack.Count > 0)
+                        {
+                            stack.Pop();
+                            SearchDFS(stack.Peek(), findall);
+                        }
+                    }
+                }   
             }
-        }
+        }  
 
         public bool isFound() // Apakah ketemu
         {
