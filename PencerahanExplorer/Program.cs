@@ -33,15 +33,22 @@ namespace PencerahanExplorer
                     // BFS
                     if (f1.scope_choice == 1)
                     {
+                        var watch = new System.Diagnostics.Stopwatch();
+                        watch.Start();
                         BFS bfs = new BFS(path, target_name, true);
-                        FileFound f2 = new FileFound(path, bfs.pathList, bfs.isFound());
+                        watch.Stop();
+                        FileFound f2 = new FileFound(path, bfs.pathList, bfs.isFound(), watch.ElapsedMilliseconds);
+
                         Application.Run(f2);
                         bfs.tree.displayTree(bfs.visited, bfs.pathList);
-                    }
+                    } 
                     else
                     {
+                        var watch = new System.Diagnostics.Stopwatch();
+                        watch.Start();
                         BFS bfs = new BFS(path, target_name, false);
-                        FileFound f2 = new FileFound(path, bfs.pathList, bfs.isFound());
+                        watch.Stop();
+                        FileFound f2 = new FileFound(path, bfs.pathList, bfs.isFound(), watch.ElapsedMilliseconds);
                         Application.Run(f2);
                         bfs.tree.displayTree(bfs.visited, bfs.pathList);
                     }
@@ -51,18 +58,24 @@ namespace PencerahanExplorer
                 {
                     if (f1.scope_choice == 1)
                     {
+                        var watch = new System.Diagnostics.Stopwatch();
+                        watch.Start();
                         DFS dfs = new DFS(path, target_name, true);
-                        FileFound f2 = new FileFound(path, dfs.pathList, dfs.isFound());
+                        watch.Stop();
+                        FileFound f2 = new FileFound(path, dfs.pathList, dfs.isFound(), watch.ElapsedMilliseconds);
                         Application.Run(f2);
                         dfs.tree.displayTree(dfs.output, dfs.pathList);
                     }
                     else
                     {
+                        var watch = new System.Diagnostics.Stopwatch();
+                        watch.Start();
                         DFS dfs = new DFS(path, target_name, false);
-                        FileFound f2 = new FileFound(path, dfs.pathList, dfs.isFound());
+                        watch.Stop();
+                        FileFound f2 = new FileFound(path, dfs.pathList, dfs.isFound(), watch.ElapsedMilliseconds);
                         Application.Run(f2);
                         dfs.tree.displayTree(dfs.output, dfs.pathList);
-                    }
+                    } 
                 }
                 
             }

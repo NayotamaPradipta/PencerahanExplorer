@@ -13,7 +13,7 @@ namespace PencerahanExplorer
 {
     public partial class FileFound : Form
     {
-        public FileFound(string start_path, List<string> final_path, bool isFound)
+        public FileFound(string start_path, List<string> final_path, bool isFound, long time)
         {
             InitializeComponent();
             label1.Text = "Starting Path : " + start_path;
@@ -39,7 +39,7 @@ namespace PencerahanExplorer
                 labelNotFound.Location = new Point(50, 100);
                 Controls.Add(labelNotFound);
             }
-            
+            label3.Text = "Time Elapsed: " + time + " ms";
         }
 
         private void label1_Click(object sender, EventArgs e)
@@ -62,6 +62,9 @@ namespace PencerahanExplorer
 
         }
 
-     
+        private void label3_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
