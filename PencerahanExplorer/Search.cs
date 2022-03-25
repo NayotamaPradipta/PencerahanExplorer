@@ -167,7 +167,7 @@ namespace Search
                     while (!found && j < files.Length)
                     {
                         tree.addChild(files[j], tree.root, false);
-                        output.Add(files[j]);
+                        
                         if (Path.GetFileName(files[j]) == target_name)
                         {
                             found = true;
@@ -175,25 +175,30 @@ namespace Search
                         }
                         else
                         {
+                            output.Add(files[j]);
                             j++;
                         }
                     }
                 }
                 else
                 {
-                    while (j < files.Length)
+                    for (int i = 0; i < files.Length; i++)
                     {
-                        tree.addChild(files[j], tree.root, false);
-                        output.Add(files[j]);
-                        if (Path.GetFileName(files[j]) == target_name)
+                        tree.addChild(files[i], tree.root, false);
+                        if (Path.GetFileName(files[i]) == target_name)
                         {
-                            pathList.Add(files[j]);
-                        }
-                        else
+                            pathList.Add(files[i]);
+                            found = true;
+                        } else
                         {
-                            j++;
+                            output.Add(files[i]);
                         }
                     }
+                }
+                if (findall && stack.Count > 1)
+                {
+                    stack.Pop();
+                    SearchDFS(stack.Peek(), findall);
                 }
                 
             }
@@ -254,7 +259,7 @@ namespace Search
                     }
                     if (!found)
                     {
-                        if (stack.Count > 0)
+                        if (stack.Count > 1)
                         {
                             stack.Pop();
                             SearchDFS(stack.Peek(), findall);
