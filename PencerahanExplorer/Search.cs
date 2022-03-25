@@ -10,7 +10,6 @@ namespace Search
 {
     public class BFS
     {
-        // belum bikin tree
 
         private bool found;
         private string target_name;
@@ -139,7 +138,6 @@ namespace Search
         private Stack<string> stack; // untuk keep track current path
         public List<string> output; // untuk keep track visited path
         public Tree.Tree tree;
-
         public DFS(string start_path, string target_name, bool findall)
         {
             // Inisialisasi atribut
@@ -151,7 +149,7 @@ namespace Search
             output = new List<string>();
             output.Add(start_path);
             tree = new Tree.Tree(start_path);
-
+            BuildTreeDFS(start_path);
             // Loop DFS utama
             SearchDFS(stack.Peek(), findall);
 
@@ -166,8 +164,7 @@ namespace Search
                 {
                     while (!found && j < files.Length)
                     {
-                        tree.addChild(files[j], tree.root, false);
-                        
+                        // tree.addChild(files[j], tree.root, false);
                         if (Path.GetFileName(files[j]) == target_name)
                         {
                             found = true;
@@ -184,7 +181,7 @@ namespace Search
                 {
                     for (int i = 0; i < files.Length; i++)
                     {
-                        tree.addChild(files[i], tree.root, false);
+                        // tree.addChild(files[i], tree.root, false);
                         if (Path.GetFileName(files[i]) == target_name)
                         {
                             pathList.Add(files[i]);
@@ -227,36 +224,21 @@ namespace Search
                         i++;
                     }
                     
-                    if (i != folders.Length)
+                    if (i != folders.Length) // Masih ada folder yang belum di visit
                     {
-                        tree.addChild(folders[i], tree.root, true);
+                        // tree.addChild(folders[i], tree.root, true);
                         stack.Push(folders[i]);
                         output.Add(folders[i]);
                         SearchDFS(stack.Peek(), findall);
                     }
-                    else
+                    else // Semua folder sudah visited
                     {
-                        if (stack.Count > 1)
-                        {
-                            stack.Pop();
-                            SearchDFS(stack.Peek(), findall);
-                        }
-                        else // Start Path
-                        {
-                            CheckFileInDirectory(files, findall);
-                            if (!found)
-                            {
-
-                            }
-                        }
+                        CheckFileInDirectory(files, findall);
                     }
                 }
                 else
                 {
-                    if (files != null)
-                    {
-                        CheckFileInDirectory(files, findall);
-                    }
+                    CheckFileInDirectory(files, findall);
                     if (!found)
                     {
                         if (stack.Count > 1)
@@ -268,7 +250,36 @@ namespace Search
                 }   
             }
         }  
-
+        private void BuildTreeDFS(string start_path)
+        {
+            string[] files = null;
+            string[] folders = null;
+            try
+            {
+                // Exception handling untuk restricted folder
+                files = Directory.GetFiles(start_path);
+                folders = Directory.GetDirectories(start_path);
+            }
+            catch { }
+            finally
+            {
+                if (folders.Length != 0)
+                {
+                    for (int i = 0; i < folders.Length; i++)
+                    {
+                        tree.addChild(folders[i], tree.root, true);
+                        BuildTreeDFS(folders[i]);
+                    }
+                }
+                if (files.Length != 0)
+                {
+                    for (int i = 0; i < files.Length; i++)
+                    {
+                        tree.addChild(files[i], tree.root, true);
+                    }
+                }
+            }
+        }
         public bool isFound() // Apakah ketemu
         {
             return found;
