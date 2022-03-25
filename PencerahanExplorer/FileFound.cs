@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
 
 namespace PencerahanExplorer
 {
@@ -23,7 +24,7 @@ namespace PencerahanExplorer
                 {
                     links[i] = new LinkLabel();
                     links[i].Text = final_path[i];
-                    links[i].Links[0].LinkData = final_path[i];
+                    links[i].Links[0].LinkData = Path.GetDirectoryName(final_path[i]);
                     links[i].AutoSize = true;
                     links[i].Location = new Point(50, 100 + (i * 20));
                     Controls.Add(links[i]);
@@ -60,5 +61,7 @@ namespace PencerahanExplorer
         {
 
         }
+
+     
     }
 }
