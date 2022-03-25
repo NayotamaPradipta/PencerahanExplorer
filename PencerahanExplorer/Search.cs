@@ -29,7 +29,7 @@ namespace Search
             pathList = new List<string>();
             tree = new Tree.Tree(start_path);
             visited = new List<string>();
-
+            BuildTree(start_path);
             queue.Enqueue(start_path);
             if (findall)
             {
@@ -73,7 +73,7 @@ namespace Search
                     {
                         for (i = 0; i < files.Length; i++)
                         {
-                            tree.addChild(files[i], tree.root, false);
+                            // tree.addChild(files[i], tree.root, false);
                             if (Path.GetFileName(files[i]) == target_name)
                             {
                                 found = true;
@@ -90,7 +90,7 @@ namespace Search
                         i = 0;
                         while (!found && i < files.Length)
                         {
-                            tree.addChild(files[i], tree.root, false);
+                            // tree.addChild(files[i], tree.root, false);
                             if (Path.GetFileName(files[i]) == target_name)
                             {
                                 found = true;
@@ -112,14 +112,45 @@ namespace Search
                     for (int k = 0; k < folders.Length; k++)
                     {
                         queue.Enqueue(folders[k]);
-                        tree.addChild(folders[k], tree.root, true);
+                        // tree.addChild(folders[k], tree.root, true);
                     }
                 }
                 visited.Add(path);
             }
         }
+        private void BuildTree(string start_path)
+        {
+            string[] files = null;
+            string[] folders = null;
+            try
+            {
+                // Exception handling untuk restricted folder
+                files = Directory.GetFiles(start_path);
+                folders = Directory.GetDirectories(start_path);
+            }
+            catch { }
+            finally
+            {
+                if (folders.Length != 0)
+                {
+                    Array.Sort(folders);
+                    for (int i = 0; i < folders.Length; i++)
+                    {
+                        tree.addChild(folders[i], tree.root, true);
+                        BuildTree(folders[i]);
+                    }
+                }
+                if (files.Length != 0)
+                {
+                    Array.Sort(files);
+                    for (int i = 0; i < files.Length; i++)
+                    {
+                        tree.addChild(files[i], tree.root, true);
+                    }
+                }
+            }
+        }
 
-        
         public bool isFound()
         {
             return found;
@@ -149,7 +180,7 @@ namespace Search
             output = new List<string>();
             output.Add(start_path);
             tree = new Tree.Tree(start_path);
-            BuildTreeDFS(start_path);
+            BuildTree(start_path);
             // Loop DFS utama
             SearchDFS(stack.Peek(), findall);
 
@@ -250,7 +281,7 @@ namespace Search
                 }   
             }
         }  
-        private void BuildTreeDFS(string start_path)
+        private void BuildTree(string start_path)
         {
             string[] files = null;
             string[] folders = null;
@@ -265,14 +296,16 @@ namespace Search
             {
                 if (folders.Length != 0)
                 {
+                    Array.Sort(folders);
                     for (int i = 0; i < folders.Length; i++)
                     {
                         tree.addChild(folders[i], tree.root, true);
-                        BuildTreeDFS(folders[i]);
+                        BuildTree(folders[i]);
                     }
                 }
                 if (files.Length != 0)
                 {
+                    Array.Sort(files);
                     for (int i = 0; i < files.Length; i++)
                     {
                         tree.addChild(files[i], tree.root, true);
