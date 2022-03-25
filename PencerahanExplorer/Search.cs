@@ -18,7 +18,7 @@ namespace Search
         public List<string> pathList;
         public Tree.Tree tree;
         public List<string> visited;
-
+        public List<string> inQueue;
         public BFS(string start_path, string target_name, bool findall)
         {
             // inisialisasi nilai-nilai atribut
@@ -29,6 +29,7 @@ namespace Search
             pathList = new List<string>();
             tree = new Tree.Tree(start_path);
             visited = new List<string>();
+            inQueue = new List<string>();
             BuildTree(start_path);
             queue.Enqueue(start_path);
             if (findall)
@@ -45,6 +46,11 @@ namespace Search
                 {
                     string head = queue.Dequeue();
                     SearchBFS(head, findall);
+                }
+                while (queue.Count > 0)
+                {
+                    string node = queue.Dequeue();
+                    inQueue.Add(node);
                 }
             }
 
@@ -265,6 +271,11 @@ namespace Search
                     else // Semua folder sudah visited
                     {
                         CheckFileInDirectory(files, findall);
+                        if (stack.Count > 1)
+                        {
+                            stack.Pop();
+                            SearchDFS(stack.Peek(), findall);
+                        }
                     }
                 }
                 else

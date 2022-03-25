@@ -50,7 +50,7 @@ namespace PencerahanExplorer
                         watch.Stop();
                         FileFound f2 = new FileFound(path, bfs.pathList, bfs.isFound(), watch.ElapsedMilliseconds);
                         Application.Run(f2);
-                        bfs.tree.displayTree(bfs.visited, bfs.pathList);
+                        bfs.tree.displayTreeBFS(bfs.visited, bfs.pathList, bfs.inQueue);
                     }
                     
                 }

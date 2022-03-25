@@ -173,7 +173,10 @@ namespace Tree
             } else if (color == "Turqoise")
             {
                 graph.FindNode(node_name).Attr.FillColor = Microsoft.Msagl.Drawing.Color.Turquoise;
-            } 
+            } else if (color == "Gray")
+            {
+                graph.FindNode(node_name).Attr.FillColor = Microsoft.Msagl.Drawing.Color.Gray;
+            }
         }
 
         public void updateParentColor(string path)
@@ -188,8 +191,31 @@ namespace Tree
                 p = p.getParent();
             }
         }
-
         public void displayTree(List<string> visited, List<string> pathList)
+        {
+            foreach (string s in visited)
+            {
+                giveColor(Path.GetFileName(s), "Red");
+            }
+
+            foreach (string c in pathList)
+            {
+                updateParentColor(c);
+            }
+            //create a form
+            System.Windows.Forms.Form form = new System.Windows.Forms.Form();
+            viewer.FitGraphBoundingBox();
+            //bind the graph to the viewer
+            viewer.Graph = graph;
+            //associate the viewer with the form
+            form.SuspendLayout();
+            viewer.Dock = System.Windows.Forms.DockStyle.Fill;
+            form.Controls.Add(viewer);
+            form.ResumeLayout();
+            //show the form
+            System.Windows.Forms.Application.Run(form);
+        }
+        public void displayTreeBFS(List<string> visited, List<string> pathList, List<string> inQueue)
         { 
             foreach (string s in visited)
             {
@@ -200,7 +226,10 @@ namespace Tree
             {
                 updateParentColor(c);
             }
-
+            foreach (string x in inQueue)
+            {
+                giveColor(Path.GetFileName(x), "Gray");
+            }
             //create a form
             System.Windows.Forms.Form form = new System.Windows.Forms.Form();
             viewer.FitGraphBoundingBox();
